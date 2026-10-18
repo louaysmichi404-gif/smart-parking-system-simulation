@@ -2,8 +2,61 @@
 import random
 from datetime import datetime
 
+import json
+import time
+import paho.mqtt.client as mqtt
+
 import pandas as pd
 import streamlit as st
+
+
+MQTT_BROKER = "test.mosquitto.org"
+MQTT_PORT = 1883
+MQTT_TOPIC = "smartpark_demo_louay_2026/P1/status"
+
+if "mqtt_status" not in st.session_state:
+    st.session_state.mqtt_status = "Waiting for sensor messages"
+if "mqtt_client" not in st.session_state:
+    st.session_state.mqtt_client = None
+
+def on_connect(client, userdata, flags, reason_code, properties):
+    if reason_code == 0:
+        client.subscribe(MQTT_TOPIC)
+        print("Subscribed to:", MQTT_TOPIC)
+
+def on_message(client, userdata, msg):
+    try:
+        data = json.loads(msg.payload.decode())
+        space = data.get("parking_space")
+        occupied = data.get("occupied")
+
+        # Streamlit session state should not be modified
+        # directly from the MQTT background thread.
+        print("MQTT message received:", space, occupied)
+
+    except (ValueError, UnicodeDecodeError) as error:
+        print("Invalid MQTT message:", error)
+
+def start_mqtt():
+    client = mqtt.Client(
+        callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
+        client_id=f"smartpark_dashboard_{int(time.time())}"
+    )
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.connect(MQTT_BROKER, MQTT_PORT, 60)
+    client.loop_start()
+    return client
+
+if st.session_state.mqtt_client is None:
+    try:
+        st.session_state.mqtt_client = start_mqtt()
+        st.session_state.mqtt_status = "MQTT client started"
+    except Exception as error:
+        st.session_state.mqtt_status = f"Connection failed: {error}"
+
+st.sidebar.caption("MQTT: " + st.session_state.mqtt_status)
+
 
 st.set_page_config(
     page_title="SmartPark | IoT Dashboard",
