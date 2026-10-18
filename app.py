@@ -20,9 +20,14 @@ if "mqtt_client" not in st.session_state:
     st.session_state.mqtt_client = None
 
 def on_connect(client, userdata, flags, reason_code, properties):
+    print("MQTT connection result:", reason_code)
+
     if reason_code == 0:
-        client.subscribe(MQTT_TOPIC)
+        result, mid = client.subscribe(MQTT_TOPIC)
+        print("Subscribe result:", result)
         print("Subscribed to:", MQTT_TOPIC)
+    else:
+        print("MQTT connection was refused.")
 
 def on_message(client, userdata, msg):
     try:
