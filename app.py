@@ -6,123 +6,132 @@ import pandas as pd
 import streamlit as st
 
 st.set_page_config(
-    page_title="SmartPark | Control Center",
+    page_title="SmartPark | Dashboard",
     page_icon="🅿️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ---------- DESIGN ----------
+# ---------------- PROFESSIONAL LIGHT THEME ----------------
+
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-html, body, [class*="css"] {
+.stApp {
+    background: #f5f7fb;
+    color: #172b4d;
     font-family: 'Inter', sans-serif;
 }
 
-.stApp {
-    background: #0b1120;
-    color: #e5eaf4;
+[data-testid="stHeader"] {
+    background: rgba(245,247,251,0.95);
 }
 
 [data-testid="stSidebar"] {
-    background: #101a2e;
-    border-right: 1px solid #26334b;
+    background: #ffffff;
+    border-right: 1px solid #e2e8f0;
+}
+
+[data-testid="stSidebar"] > div {
+    padding-top: 1.5rem;
 }
 
 .block-container {
+    max-width: 1500px;
     padding-top: 2rem;
     padding-bottom: 3rem;
-    max-width: 1500px;
 }
 
 .hero {
-    padding: 28px 30px;
-    border: 1px solid #293954;
-    border-radius: 20px;
-    background: linear-gradient(120deg, #162742, #111a2d 70%, #123b3b);
-    margin-bottom: 25px;
+    background: linear-gradient(110deg, #ffffff 0%, #edf8f7 100%);
+    border: 1px solid #dce8ec;
+    border-radius: 18px;
+    padding: 28px 32px;
+    margin-bottom: 26px;
+    box-shadow: 0 4px 18px rgba(20, 45, 70, 0.04);
 }
 
 .eyebrow {
-    color: #4adeb5;
-    font-size: 12px;
+    color: #078779;
+    font-size: 11px;
     font-weight: 800;
     letter-spacing: 2px;
-    text-transform: uppercase;
 }
 
 .hero h1 {
-    color: #f7faff;
-    font-size: 34px;
+    color: #142d4e;
+    font-size: 32px;
     font-weight: 800;
     margin: 8px 0;
 }
 
 .hero p {
-    color: #a9b8ce;
-    margin-bottom: 0;
+    color: #63748b;
     font-size: 14px;
-}
-
-.kpi {
-    background: #131e32;
-    border: 1px solid #283650;
-    border-radius: 16px;
-    padding: 20px;
-    min-height: 125px;
-}
-
-.kpi-label {
-    color: #9cacc3;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.kpi-value {
-    color: #f6f8fc;
-    font-size: 32px;
-    font-weight: 800;
-    margin: 9px 0 3px;
-}
-
-.kpi-note {
-    color: #4adeb5;
-    font-size: 12px;
+    margin: 0;
 }
 
 .section-title {
-    color: #f4f7fc;
+    color: #172b4d;
     font-size: 21px;
     font-weight: 750;
-    margin: 28px 0 14px;
+    margin: 26px 0 14px;
+}
+
+.kpi {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    padding: 20px;
+    min-height: 126px;
+    box-shadow: 0 3px 12px rgba(20, 45, 70, 0.035);
+}
+
+.kpi-label {
+    color: #687b91;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+.kpi-value {
+    color: #172b4d;
+    font-size: 32px;
+    font-weight: 800;
+    margin: 10px 0 4px;
+}
+
+.kpi-note {
+    color: #078779;
+    font-size: 12px;
 }
 
 .parking-card {
-    background: #131e32;
-    border: 1px solid #2a3851;
-    border-radius: 16px;
-    padding: 18px;
+    background: #ffffff;
+    border: 1px solid #e0e7ef;
+    border-radius: 15px;
+    padding: 19px;
     margin-bottom: 12px;
+    box-shadow: 0 3px 12px rgba(20, 45, 70, 0.035);
 }
 
 .parking-id {
-    color: #f3f6fc;
+    color: #172b4d;
     font-size: 20px;
     font-weight: 800;
 }
 
 .parking-type {
-    color: #91a2bb;
+    color: #7b8ba0;
     font-size: 12px;
-    margin-top: 4px;
+    margin-top: 5px;
 }
 
 .status-free {
     display: inline-block;
-    background: #103b32;
-    color: #58e5b8;
+    background: #e5f7f0;
+    color: #087b58;
     padding: 6px 10px;
     border-radius: 20px;
     font-size: 11px;
@@ -131,34 +140,46 @@ html, body, [class*="css"] {
 
 .status-busy {
     display: inline-block;
-    background: #452329;
-    color: #ff9ba5;
+    background: #fff0ee;
+    color: #c34444;
     padding: 6px 10px;
     border-radius: 20px;
     font-size: 11px;
     font-weight: 800;
 }
 
-div.stButton > button {
-    border-radius: 10px;
-    min-height: 43px;
-    font-weight: 650;
-    border: 1px solid #334561;
-}
-
 div[data-testid="stMetric"] {
-    background: #131e32;
-    border: 1px solid #283650;
-    padding: 15px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 3px 12px rgba(20,45,70,0.025);
 }
 
 div[data-testid="stMetricLabel"] {
-    color: #a9b8ce;
+    color: #687b91;
+}
+
+div.stButton > button {
+    border-radius: 9px;
+    min-height: 42px;
+    font-weight: 650;
+    border: 1px solid #d6e0ea;
+    background: #ffffff;
+    color: #172b4d;
+}
+
+div.stButton > button:hover {
+    border-color: #078779;
+    color: #078779;
+}
+
+.stProgress > div > div > div > div {
+    background-color: #078779;
 }
 
 hr {
-    border-color: #263650;
+    border-color: #e2e8f0;
 }
 
 footer {
@@ -167,7 +188,8 @@ footer {
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- SESSION STATE ----------
+# ---------------- SESSION STATE ----------------
+
 if "parking" not in st.session_state:
     st.session_state.parking = {
         f"P{i}": False for i in range(1, 7)
@@ -192,45 +214,51 @@ def change_status(space, occupied, event):
     record_event(space, event)
 
 
-# ---------- SIDEBAR ----------
+# ---------------- SIDEBAR ----------------
+
 with st.sidebar:
     st.markdown("## 🅿️ SmartPark")
-    st.caption("PARKING CONTROL CENTER")
+    st.caption("PARKING MANAGEMENT")
     st.divider()
 
     page = st.radio(
         "NAVIGATION",
         ["Overview", "Parking Management", "Activity Log"],
-        label_visibility="visible",
     )
 
     st.divider()
     st.markdown("**SYSTEM STATUS**")
-    st.markdown("🟢 Simulation running")
-    st.caption("Demo mode · No physical sensors")
+    st.success("Simulation active")
+    st.caption("Demo mode · Virtual sensors")
     st.divider()
-    st.caption("SmartPark Dashboard v1.0")
+    st.caption("SmartPark Dashboard · v1.0")
 
+# ---------------- STATISTICS ----------------
 
-# ---------- CALCULATIONS ----------
 total = len(parking)
 occupied = sum(parking.values())
 available = total - occupied
 rate = occupied / total * 100 if total else 0
 
-# ---------- HEADER ----------
+# ---------------- HERO HEADER ----------------
+
 st.markdown("""
 <div class="hero">
     <div class="eyebrow">SMART MOBILITY · CONTROL CENTER</div>
     <h1>Parking Overview</h1>
-    <p>Monitor space availability, manage simulated vehicle movements,
-    and review parking activity from one dashboard.</p>
+    <p>Monitor parking availability, simulate vehicle movements,
+    and review parking activity from one central dashboard.</p>
 </div>
 """, unsafe_allow_html=True)
 
+# ---------------- OVERVIEW ----------------
+
 if page == "Overview":
-    st.markdown('<div class="section-title">Performance Overview</div>',
-                unsafe_allow_html=True)
+
+    st.markdown(
+        '<div class="section-title">Performance Overview</div>',
+        unsafe_allow_html=True,
+    )
 
     k1, k2, k3, k4 = st.columns(4)
 
@@ -251,17 +279,20 @@ if page == "Overview":
             </div>
             """, unsafe_allow_html=True)
 
-    st.markdown('<div class="section-title">Live Parking Map</div>',
-                unsafe_allow_html=True)
-    st.caption("Status changes when you use the simulation controls.")
+    st.markdown(
+        '<div class="section-title">Parking Space Status</div>',
+        unsafe_allow_html=True,
+    )
 
     cols = st.columns(3)
+
     for i, (space, is_occupied) in enumerate(parking.items()):
         badge = (
             '<span class="status-busy">● OCCUPIED</span>'
             if is_occupied else
             '<span class="status-free">● AVAILABLE</span>'
         )
+
         with cols[i % 3]:
             st.markdown(f"""
             <div class="parking-card">
@@ -274,8 +305,10 @@ if page == "Overview":
             </div>
             """, unsafe_allow_html=True)
 
-    st.markdown('<div class="section-title">Occupancy Analytics</div>',
-                unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-title">Occupancy Analytics</div>',
+        unsafe_allow_html=True,
+    )
 
     chart_col, summary_col = st.columns([1.5, 1])
 
@@ -284,22 +317,30 @@ if page == "Overview":
             "Status": ["Available", "Occupied"],
             "Spaces": [available, occupied],
         }).set_index("Status")
-        st.bar_chart(chart_data, color="#4adeb5")
+
+        st.bar_chart(chart_data, color="#078779")
 
     with summary_col:
         st.markdown("#### Capacity utilization")
         st.progress(int(rate))
-        st.write(f"**{rate:.0f}%** of total capacity is occupied.")
-        st.caption(f"{available} of {total} spaces are currently available.")
+        st.write(f"**{rate:.0f}%** of parking capacity is occupied.")
+        st.caption(f"{available} of {total} spaces are available.")
+
+# ---------------- PARKING MANAGEMENT ----------------
 
 elif page == "Parking Management":
-    st.markdown('<div class="section-title">Manage Parking Spaces</div>',
-                unsafe_allow_html=True)
 
-    selected = st.selectbox("Select parking bay", list(parking.keys()))
-    current = parking[selected]
+    st.markdown(
+        '<div class="section-title">Manage Parking Spaces</div>',
+        unsafe_allow_html=True,
+    )
 
-    if current:
+    selected = st.selectbox(
+        "Select parking bay",
+        list(parking.keys()),
+    )
+
+    if parking[selected]:
         st.error(f"{selected} is currently occupied.")
     else:
         st.success(f"{selected} is currently available.")
@@ -326,12 +367,14 @@ elif page == "Parking Management":
         if st.button("🎲 Random Event", use_container_width=True):
             space = random.choice(list(parking.keys()))
             new_status = not parking[space]
-            event = "Vehicle arrived" if new_status else "Vehicle departed"
+            event = (
+                "Vehicle arrived"
+                if new_status else "Vehicle departed"
+            )
             change_status(space, new_status, event)
             st.rerun()
 
-    st.markdown('<div class="section-title">All Parking Bays</div>',
-                unsafe_allow_html=True)
+    st.markdown("#### All parking bays")
 
     for space, is_occupied in parking.items():
         left, middle, right = st.columns([1, 2, 1])
@@ -342,24 +385,31 @@ elif page == "Parking Management":
     if st.button("Reset All Spaces"):
         for space in parking:
             parking[space] = False
+
         record_event("ALL", "Parking lot reset")
         st.rerun()
 
+# ---------------- ACTIVITY LOG ----------------
+
 elif page == "Activity Log":
-    st.markdown('<div class="section-title">Parking Activity</div>',
-                unsafe_allow_html=True)
+
+    st.markdown(
+        '<div class="section-title">Parking Activity</div>',
+        unsafe_allow_html=True,
+    )
 
     if st.session_state.events:
+        events_df = pd.DataFrame(st.session_state.events)
+
         st.dataframe(
-            pd.DataFrame(st.session_state.events),
+            events_df,
             use_container_width=True,
             hide_index=True,
         )
 
-        csv = pd.DataFrame(st.session_state.events).to_csv(index=False)
         st.download_button(
             "⬇️ Export activity as CSV",
-            data=csv,
+            data=events_df.to_csv(index=False),
             file_name="smartpark_activity.csv",
             mime="text/csv",
         )
@@ -370,7 +420,8 @@ elif page == "Activity Log":
     else:
         st.info("No activity recorded yet. Register an arrival or departure.")
 
-# ---------- FOOTER ----------
+# ---------------- FOOTER ----------------
+
 st.divider()
 st.caption(
     "SMARTPARK · Academic portfolio prototype · "
